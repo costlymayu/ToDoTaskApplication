@@ -1,11 +1,18 @@
 package com.example.sudam.ToDoApplication;
 
+import android.Manifest;
+import android.annotation.TargetApi;
+import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.ContentResolver;
 import android.content.ContentValues;
+import android.content.pm.PackageManager;
 import android.net.Uri;
+import android.os.Build;
 import android.provider.CalendarContract;
+import android.support.annotation.NonNull;
+import android.support.annotation.RequiresApi;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -26,12 +33,14 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 import java.util.Locale;
 import java.util.TimeZone;
 
 /**
- * Created by Sudam Chole on 22/02/19.
+ * Created by Sudam Chole on 7/05/19.
  */
 
 public class AddTaskActivity extends AppCompatActivity {
@@ -44,6 +53,8 @@ public class AddTaskActivity extends AppCompatActivity {
     final Calendar myCalendar = Calendar.getInstance();
     private CheckBox addReminder;
 
+    private String[] permissions = {Manifest.permission.WRITE_CALENDAR, Manifest.permission
+            .READ_CALENDAR};
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -56,12 +67,7 @@ public class AddTaskActivity extends AppCompatActivity {
         mFirebaseInstance = FirebaseDatabase.getInstance();
         addReminder=findViewById(R.id.checkBoxAddReminder);
 
-      /*  addReminder.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
 
-            }
-        });*/
         // get reference to 'Tasks' node
         mFirebaseDatabase = mFirebaseInstance.getReference("Tasks");
 
@@ -127,9 +133,55 @@ public class AddTaskActivity extends AppCompatActivity {
                 mTimePicker.show();
             }
         });
-
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if(arePermissionsEnabled()){
+//                    permissions granted, continue flow normally
+            }else{
+                requestMultiplePermissions();
+            }
+        }
 
     }
+    @RequiresApi(api = Build.VERSION_CODES.M)
+    private boolean arePermissionsEnabled(){
+        for(String permission : permissions){
+            if(checkSelfPermission(permission) != PackageManager.PERMISSION_GRANTED)
+                return false;
+        }
+        return true;
+    }
+    @RequiresApi(api = Build.VERSION_CODES.M)
+    private void requestMultiplePermissions(){
+        List<String> remainingPermissions = new ArrayList<>();
+        for (String permission : permissions) {
+            if (checkSelfPermission(permission) != PackageManager.PERMISSION_GRANTED) {
+                remainingPermissions.add(permission);
+            }
+        }
+        requestPermissions(remainingPermissions.toArray(new String[remainingPermissions.size()]), 101);
+    }
+    @TargetApi(Build.VERSION_CODES.M)
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if(requestCode == 101){
+            for(int i=0;i<grantResults.length;i++){
+                if(grantResults[i] != PackageManager.PERMISSION_GRANTED){
+                    if(shouldShowRequestPermissionRationale(permissions[i])){
+                        new AlertDialog.Builder(this)
+                                .setMessage("Your error message here")
+                                .setPositiveButton("Allow", (dialog, which) -> requestMultiplePermissions())
+                                .setNegativeButton("Cancel", (dialog, which) -> dialog.dismiss())
+                                .create()
+                                .show();
+                    }
+                    return;
+                }
+            }
+            //all is good, continue flow
+        }
+    }
+
     private void updateLabel() {
         String myFormat = "MM/dd/yy"; //In which you need put here
         SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.US);
@@ -146,7 +198,7 @@ public class AddTaskActivity extends AppCompatActivity {
                     &&!editTextDate.getText().toString().isEmpty()&&!editTextTime.getText().toString().isEmpty()){
                 createEvent(editTextTaskTittle.getText().toString().trim(),editTextTaskDesc.getText().toString().trim(),editTextDate.getText().toString().trim(),editTextTime.getText().toString().trim());
                 pb.setVisibility(ProgressBar.GONE);
-                if (((CheckBox) view).isChecked()) {
+                if (addReminder.isChecked()) {
                     addReminderInCalendar(editTextTaskTittle.getText().toString());
                 }
                 Toast.makeText(getApplicationContext(), getResources().getString(R.string.taskAdded), Toast.LENGTH_SHORT).show();

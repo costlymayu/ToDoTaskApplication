@@ -23,9 +23,8 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 
 /**
- * Created by Sudam Chole on 22/02/19.
+ * Created by Sudam Chole on 7/05/19.
  */
-
 public class MainActivity extends AppCompatActivity {
 
     private FirebaseAuth.AuthStateListener authListener;

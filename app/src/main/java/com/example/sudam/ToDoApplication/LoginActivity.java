@@ -17,7 +17,7 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 
 /**
- * Created by Sudam Chole on 22/02/19.
+ * Created by Sudam Chole on 7/05/19.
  */
 
 public class LoginActivity extends AppCompatActivity {

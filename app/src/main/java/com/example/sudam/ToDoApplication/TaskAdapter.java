@@ -1,6 +1,7 @@
 package com.example.sudam.ToDoApplication;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -11,7 +12,7 @@ import android.widget.TextView;
 import java.util.ArrayList;
 
 /**
- * Created by Sudam Chole on 22/02/19.
+ * Created by Sudam Chole on 7/05/19.
  */
 
 public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.CustomViewHolder> {
@@ -41,6 +42,16 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.CustomViewHold
         holder.taskDesc.setText(currentTasks.taskDesc);
         holder.taskDate.setText(currentTasks.taskDate);
         holder.taskTime.setText(currentTasks.taskTime);
+
+        holder.taskComment.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent=new Intent(context,DetailActivity.class);
+                intent.putExtra("comment",currentTasks.taskComment);
+                context.startActivity(intent);
+
+            }
+        });
 
 
     }
