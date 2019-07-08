@@ -46,7 +46,7 @@ import java.util.TimeZone;
 public class AddTaskActivity extends AppCompatActivity {
 
     private static final String TAG = MainActivity.class.getSimpleName();
-    private EditText editTextTaskTittle,editTextTaskDesc,editTextDate,editTextTime;
+    private EditText editTextTaskTittle,editTextTaskDesc,editTextDate,editTextTime,editTextComment;
     private DatabaseReference mFirebaseDatabase;
     private FirebaseDatabase mFirebaseInstance;
     private String eventId;
@@ -64,6 +64,7 @@ public class AddTaskActivity extends AppCompatActivity {
         editTextTaskDesc=findViewById(R.id.editTextDesc);
         editTextDate=findViewById(R.id.editTextDate);
         editTextTime=findViewById(R.id.editTextTime);
+        editTextComment=findViewById(R.id.editTextComment);
         mFirebaseInstance = FirebaseDatabase.getInstance();
         addReminder=findViewById(R.id.checkBoxAddReminder);
 
@@ -196,7 +197,7 @@ public class AddTaskActivity extends AppCompatActivity {
             Toast.makeText(getApplicationContext(), getResources().getString(R.string.addingTask), Toast.LENGTH_SHORT).show();
             if(!editTextTaskTittle.getText().toString().isEmpty()&&!editTextTaskDesc.getText().toString().isEmpty()
                     &&!editTextDate.getText().toString().isEmpty()&&!editTextTime.getText().toString().isEmpty()){
-                createEvent(editTextTaskTittle.getText().toString().trim(),editTextTaskDesc.getText().toString().trim(),editTextDate.getText().toString().trim(),editTextTime.getText().toString().trim());
+                createEvent(editTextTaskTittle.getText().toString().trim(),editTextTaskDesc.getText().toString().trim(),editTextDate.getText().toString().trim(),editTextTime.getText().toString().trim(),editTextComment.getText().toString());
                 pb.setVisibility(ProgressBar.GONE);
                 if (addReminder.isChecked()) {
                     addReminderInCalendar(editTextTaskTittle.getText().toString());
@@ -217,7 +218,7 @@ public class AddTaskActivity extends AppCompatActivity {
     /**
      * Creating new event node under 'Tasks'
      */
-    private void createEvent(String eventName, String eventAgenda,String eventDate,String eventTime) {
+    private void createEvent(String taskTittle, String taskDesc,String taskDate,String taskTime,String taskComment) {
         // TODO
         // In real apps this userId should be fetched
         // by implementing firebase auth
@@ -225,7 +226,7 @@ public class AddTaskActivity extends AppCompatActivity {
             eventId = mFirebaseDatabase.push().getKey();
         }
 
-        Tasks user = new Tasks(eventName, eventAgenda,eventDate,eventTime);
+        Tasks user = new Tasks(taskTittle, taskDesc,taskDate,taskTime,taskComment);
 
         mFirebaseDatabase.child(eventId).setValue(user);
    }
