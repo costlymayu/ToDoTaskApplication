@@ -37,5 +37,6 @@
     <string name="sent_request">We have sent you request to reset your password!</string>
     <string name="fail_sent_request">Failed to send reset email request!</string>
     <string name="taskTime">Task time</string>
+    <string name="comments">Comments</string>
 </resources>
 

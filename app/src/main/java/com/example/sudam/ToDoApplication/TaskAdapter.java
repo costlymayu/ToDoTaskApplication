@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 
@@ -46,9 +47,15 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.CustomViewHold
         holder.taskComment.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent=new Intent(context,DetailActivity.class);
-                intent.putExtra("comment",currentTasks.taskComment);
-                context.startActivity(intent);
+                if (currentTasks.taskComment.isEmpty()){
+                    Toast.makeText(context,"No comment for this task",Toast.LENGTH_LONG).show();
+                }else {
+                    Intent intent=new Intent(context,DetailActivity.class);
+                    intent.putExtra("comment",currentTasks.taskComment.toString());
+                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    context.startActivity(intent);
+                }
+
 
             }
         });
@@ -77,6 +84,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.CustomViewHold
             taskDesc = (TextView) itemView.findViewById(R.id.txtTaskDesc);
             taskDate = (TextView) itemView.findViewById(R.id.txtTaskDate);
             taskTime = (TextView) itemView.findViewById(R.id.txtTaskTime);
+            taskComment=(TextView) itemView.findViewById(R.id.txtTaskComment);
 
         }
     }

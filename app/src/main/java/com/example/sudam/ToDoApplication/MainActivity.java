@@ -109,6 +109,7 @@ public class MainActivity extends AppCompatActivity {
                     e.taskDesc = x.child("taskDesc").getValue(String.class);
                     e.taskDate = x.child("taskDate").getValue(String.class);
                     e.taskTime = x.child("taskTime").getValue(String.class);
+                    e.taskComment = x.child("taskComment").getValue(String.class);
 
                     currTasks.add(e);
                     tasksAdapter.notifyDataSetChanged();
